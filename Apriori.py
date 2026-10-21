@@ -28,7 +28,7 @@ print(frequent_items)
 
 rules = association_rules(
     frequent_items,
-    metric="confidence",
+    metric="confidence", # support, lift , consequents 
     min_threshold=0.7,
     num_itemsets=len(df)
 )
