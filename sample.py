@@ -1,18 +1,25 @@
-import numpy as np
-from scipy.stats import chisquare
+import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder 
+from mlxtend.frequent_patterns import apriori , association_rules 
 
+transactions = [
+    ['Milk', 'Bread', 'Butter'],
+    ['Bread', 'Butter'],
+    ['Milk', 'Bread'],
+    ['Milk', 'Butter'],
+    ['Milk', 'Bread', 'Butter']
+]
 
-observed = [23, 24, 25, 17, 89]
-expected = [32, 32, 12, 34, 52]
+te = TransactionEncoder()
 
+data = te.fit(transactions).transform(transactions)
 
-expected  = np.array(expected)*(sum(observed)/sum(expected))
+df = pd.DataFrame(data,columns=te.columns_)
 
-chi,p = chisquare(observed,expected)
+frequent_items = apriori(df,min_support=0.4,use_colnames=True)
 
-print(f"Chi-square: ",chi)
+print(frequent_items)
 
-if p < 0.05 :
-    print(f"Significant exists")
-else:
-    print(f"No significant exists")
+rules = association_rules(frequent_items, min_threshold=25,metric='confidence',num_itemsets=len(df))
+
+print(rules)
